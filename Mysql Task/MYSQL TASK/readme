@@ -1,0 +1,325 @@
+       
+       ------------------------------------------- MYSQL TASK ----------------------------------------- 
+
+---- > Requirements:
+         
+ > Create a database named ecommerce.
+ > Create three tables: customers, orders, and products.
+ > Insert some sample data into the tables.
+
+
+
+ ---> creating a first Table of customer :
+     
+    >>>>> QUREY : 
+           
+             CREATE TABLE customers (
+           id INT AUTO_INCREMENT PRIMARY KEY,  
+           name VARCHAR(100) NOT NULL,         
+           email VARCHAR(100) NOT NULL UNIQUE, 
+           address VARCHAR(255) NOT NULL);
+
+           Query OK, 0 rows affected (0.07 sec)
+            
+    
+    >>>> ADDING VALUES INTO THE TABLE OF CUSTOMERS :
+
+       mysql> INSERT INTO customers (name, email, address)
+       VALUES
+       ('John Doe', 'johndoe@example.com', '1234 Elm St'),
+       ('Jane Smith', 'janesmith@example.com', '5678 Oak St'),
+       ('Robert Brown', 'robertbrown@example.com', '9101 Pine St');
+      
+          
+    >>>> TABLE STRUCTURE OF CUSTOMERS TABLE AFTER ADDING VALUES IN CUSTOMERS :
+
+        mysql> select * from customers;
+         
+          +----+--------------+-------------------------+--------------+
+          | id | name         | email                   | address      |
+          +----+--------------+-------------------------+--------------+
+          |  1 | John Doe     | johndoe@example.com     | 1234 Elm St  |
+          |  2 | Jane Smith   | janesmith@example.com   | 5678 Oak St  |
+          |  3 | Robert Brown | robertbrown@example.com | 9101 Pine St |
+          +----+--------------+-------------------------+--------------+
+        
+
+
+ ---> creating a secound Table of orders :
+
+    >>>>> QUREY : 
+          
+        mysql> CREATE TABLE orders (
+        id INT AUTO_INCREMENT PRIMARY KEY,  
+        customer_id INT NOT NULL,            
+        order_date DATE NOT NULL,           
+        total_amount DECIMAL(10, 2) NOT NULL, 
+        FOREIGN KEY (customer_id) REFERENCES customers(id));
+
+    >>>>  ADDING VALUES INTO THE TABLE OF ORDERS :
+
+         mysql> INSERT INTO orders (customer_id, order_date, total_amount)
+         VALUES
+         (1, '2024-10-01', 100.00),
+         (2, '2024-10-05', 200.00),
+         (3, '2024-10-10', 150.00); 
+
+    >>>> TABLE STRUCTURE OF ORDERS TABLE AFTER ADDING VALUES IN ORDERS :
+
+        mysql> select * from orders; 
+
+        +----+-------------+------------+--------------+
+        | id | customer_id | order_date | total_amount |
+        +----+-------------+------------+--------------+
+        |  1 |           1 | 2024-10-01 |       100.00 |
+        |  2 |           2 | 2024-10-05 |       200.00 |
+        |  3 |           3 | 2024-10-10 |       150.00 |
+        +----+-------------+------------+--------------+    
+          
+
+ ---> creating a Third Table of products :
+
+    >>>>> QUREY :
+          
+          mysql> CREATE TABLE products (
+          id INT AUTO_INCREMENT PRIMARY KEY,  
+          name VARCHAR(100) NOT NULL,         
+          price DECIMAL(10, 2) NOT NULL,      
+          description TEXT);
+
+
+    >>>>  ADDING VALUES INTO THE TABLE OF PRODUCTS :
+
+         mysql> INSERT INTO products (name, price, description)
+         VALUES
+         ('Product A', 25.00, 'Description of Product A'),
+         ('Product B', 35.00, 'Description of Product B'),
+         ('Product C', 40.00, 'Description of Product C');
+
+    >>>> TABLE STRUCTURE OF PRODUCTS TABLE AFTER ADDING VALUES IN PRODUCTS :
+
+        mysql> select * from orders; 
+   
+        +----+-----------+-------+--------------------------+
+        | id | name      | price | description              |
+        +----+-----------+-------+--------------------------+
+        |  1 | Product A | 25.00 | Description of Product A |
+        |  2 | Product B | 35.00 | Description of Product B |
+        |  3 | Product C | 40.00 | Description of Product C |
+        +----+-----------+-------+--------------------------+
+
+
+ ---> creating a another Table for (Normalization) : 
+
+     " I create a separate table for order items to properly normalize the database."
+
+     >>>>> QUREY :
+
+         mysql> CREATE TABLE order_items (
+         id INT AUTO_INCREMENT PRIMARY KEY,    
+         order_id INT NOT NULL,                 
+         product_id INT NOT NULL,               
+         quantity INT NOT NULL,                 
+         price DECIMAL(10, 2) NOT NULL,          
+         FOREIGN KEY (order_id) REFERENCES orders(id),      
+         FOREIGN KEY (product_id) REFERENCES products(id));
+
+
+     >>>>  ADDING VALUES INTO THE TABLE OF ORDER_ITEMS :
+
+        mysql> INSERT INTO order_items (order_id, product_id, quantity, price)
+        VALUES
+         (1, 1, 2, 25.00),
+         (1, 2, 1, 35.00),
+         (2, 2, 3, 35.00),
+         (3, 3, 4, 40.00);
+
+     >>>> TABLE STRUCTURE OF ORDER_ITEAM TABLE AFTER ADDING VALUES IN ORDER_ITEAM :
+         
+        mysql> select * from order_iteam;
+
+        +----+----------+------------+----------+-------+
+        | id | order_id | product_id | quantity | price |
+        +----+----------+------------+----------+-------+
+        |  1 |        1 |          1 |        2 | 25.00 |
+        |  2 |        1 |          2 |        1 | 35.00 |
+        |  3 |        2 |          2 |        3 | 35.00 |
+        |  4 |        3 |          3 |        4 | 40.00 |
+        +----+----------+------------+----------+-------+
+
+
+                <------------------------------ TASK QUERIES TO WRITE ---------------------------->
+
+
+    1. Retrieve all customers who have placed an order in the last 30 days ?
+  
+     >>> QUERIES :
+
+             mysql> SELECT DISTINCT c.name, c.email
+             FROM customers c
+             JOIN orders o ON c.id = o.customer_id
+             WHERE o.order_date >= CURDATE() - INTERVAL 30 DAY;  
+
+     >>> SOLUTION TABLE :
+
+        +--------------+-------------------------+
+        | name         | email                   |
+        +--------------+-------------------------+
+        | Robert Brown | robertbrown@example.com |
+        +--------------+-------------------------+
+
+
+    2. Get the total amount of all orders placed by each customer ?
+     
+     >>> QUERIES :
+
+             mysql> SELECT c.name, SUM(o.total_amount) AS total_spent
+             FROM customers c
+             JOIN orders o ON c.id = o.customer_id
+             GROUP BY c.id;
+
+     >>> SOLUTION TABLE :
+
+        +--------------+-------------+
+        | name         | total_spent |
+        +--------------+-------------+
+        | John Doe     |      100.00 |
+        | Jane Smith   |      200.00 |
+        | Robert Brown |      150.00 |
+        +--------------+-------------+       
+
+
+    3. Update the price of Product C to 45.00 ?
+
+     >>> QUERIES :
+
+             mysql> UPDATE products
+             SET price = 45.00
+             WHERE name = 'Product C';
+
+     >>> SOLUTION TABLE :
+
+        +----+-----------+-------+--------------------------+
+        | id | name      | price | description              |
+        +----+-----------+-------+--------------------------+
+        |  1 | Product A | 25.00 | Description of Product A |
+        |  2 | Product B | 35.00 | Description of Product B |
+        |  3 | Product C | 45.00 | Description of Product C |
+        +----+-----------+-------+--------------------------+        
+
+
+    4. Add a new column discount to the products table ?
+
+     >>> QUERIES :
+ 
+             ALTER TABLE products
+             ADD COLUMN discount DECIMAL(5, 2) DEFAULT 0.00;
+
+     >>> SOLUTION TABLE :
+
+        +----+-----------+-------+--------------------------+----------+
+        | id | name      | price | description              | discount |
+        +----+-----------+-------+--------------------------+----------+
+        |  1 | Product A | 25.00 | Description of Product A |     0.00 |
+        |  2 | Product B | 35.00 | Description of Product B |     0.00 |
+        |  3 | Product C | 45.00 | Description of Product C |     0.00 |
+        +----+-----------+-------+--------------------------+----------+      
+            
+   
+    5. Retrieve the top 3 products with the highest price ?  
+
+     >>> QUERIES :
+
+         mysql> SELECT name, price
+         FROM products
+         ORDER BY price DESC
+         LIMIT 3;
+
+
+     >>> SOLUTION TABLE :
+
+        +-----------+-------+
+        | name      | price |
+        +-----------+-------+
+        | Product C | 45.00 |
+        | Product B | 35.00 |
+        | Product A | 25.00 |
+        +-----------+-------+
+
+    6. Get the names of customers who have ordered Product A ? 
+
+     >>> QUERIES :
+
+         mysql> SELECT DISTINCT c.name
+         FROM customers c
+         JOIN orders o ON c.id = o.customer_id
+         JOIN order_items oi ON o.id = oi.order_id
+         JOIN products p ON oi.product_id = p.id
+         WHERE p.name = 'Product A';
+
+     
+     >>> SOLUTION TABLE :
+      
+        +----------+
+        | name     |
+        +----------+
+        | John Doe |
+        +----------+
+
+
+    7. Join the orders and customers tables to retrieve the customer's name and order date for each order ?
+       
+     >>> QUERIES : 
+         
+         mysql> SELECT c.name AS customer_name, o.order_date
+         FROM orders o
+         JOIN customers c ON o.customer_id = c.id;
+
+
+     >>> SOLUTION TABLE : 
+          
+        +---------------+------------+
+        | customer_name | order_date |
+        +---------------+------------+
+        | John Doe      | 2024-10-01 |
+        | Jane Smith    | 2024-10-05 |
+        | Robert Brown  | 2024-10-10 |
+        +---------------+------------+  
+
+
+    8. Retrieve the orders with a total amount greater than 150.00 ?
+ 
+
+     >>> QUERIES : 
+          
+         mysql> SELECT o.id, o.order_date, o.total_amount
+         FROM orders o
+         WHERE o.total_amount > 150.00;
+
+
+     >>> SOLUTION TABLE :
+
+        +----+------------+--------------+
+        | id | order_date | total_amount |
+        +----+------------+--------------+
+        |  2 | 2024-10-05 |       200.00 |
+        +----+------------+--------------+
+
+
+    9. Retrieve the average total of all orders ? 
+
+     >>> QUERIES :
+
+         mysql> SELECT AVG(total_amount) AS average_order_total
+         FROM orders;
+
+
+     >>> SOLUTION TABLE :
+
+        +---------------------+
+        | average_order_total |
+        +---------------------+
+        |          150.000000 |
+        +---------------------+
+
+   -------------------------------------  DONE THE ALL GIVEN TASK ----------------------------------------     
