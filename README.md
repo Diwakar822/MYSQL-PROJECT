@@ -1,14 +1,18 @@
- MYSQL PROJECT 
+## MYSQL PROJECT 
+---
 
-== > E-commerce SQL Database
-== > This repository contains a solution for managing a simple e-commerce system using MySQL. The system includes the creation of a database, tables for customers, orders, and products, 
+## E-commerce SQL Database
+ This repository contains a solution for managing a simple e-commerce system using MySQL. The system includes the creation of a database, tables for customers, orders, and products, 
     along with various SQL queries to manipulate and retrieve data.
-    
-== > Task Overview
+
+---
+## Task Overview
     
  " The task involves creating an e-commerce database with the following requirements: "
 
-== > Database Name: ecommerce
+---
+
+## Database Name: ecommerce
     Tables:
 --> customers: To store customer information.
 --> orders: To store details about customer orders.
