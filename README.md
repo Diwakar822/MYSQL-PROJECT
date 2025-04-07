@@ -1,4 +1,4 @@
-    -------------------------------------------------------------------- MYSQL PROJECT ---------------------------------------------------------------------------------------
+ MYSQL PROJECT 
 
 == > E-commerce SQL Database
 == > This repository contains a solution for managing a simple e-commerce system using MySQL. The system includes the creation of a database, tables for customers, orders, and products, 
@@ -16,4 +16,4 @@
 --> order_items: To store individual items within an order (for normalization).
 --> Sample Data: Insert sample data into the tables.
 --> SQL Queries: Perform various SQL queries to retrieve and manipulate data from the e-commerce database. 
-                                                                                                              ----> DIWAKAR.J
+                                                                                                          
