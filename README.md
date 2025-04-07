@@ -14,10 +14,10 @@
 
 ## Database Name: ecommerce
     Tables:
---> customers: To store customer information.
---> orders: To store details about customer orders.
---> products: To store information about the products being sold.
---> order_items: To store individual items within an order (for normalization).
---> Sample Data: Insert sample data into the tables.
---> SQL Queries: Perform various SQL queries to retrieve and manipulate data from the e-commerce database. 
+## customers: To store customer information.
+## orders: To store details about customer orders.
+## products: To store information about the products being sold.
+## order_items: To store individual items within an order (for normalization).
+## Sample Data: Insert sample data into the tables.
+## SQL Queries: Perform various SQL queries to retrieve and manipulate data from the e-commerce database. 
                                                                                                           
